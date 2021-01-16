@@ -1,0 +1,40 @@
+
+<ytd-item-section-renderer> 横一列分
+<div id="contents">
+<ytd-shelf-renderer>
+
+<div id="title-container">
+<div id="title-text">
+
+  <a title="" href=" ... live_view=501 ... ">
+  ライブ配信中
+OR
+  <a title="" href=" ... live_view=502 ... ">
+  今後のライブストリーム
+
+
+<div id="contents">
+
+
+  <ytd-grid-video-renderer>
+    <div id="details">
+      <a id="video-title" href=" (link) "> (title) </a>
+      <div id="metadata-container">
+        <div id="metadata">
+            <div id="metadata-line">
+              <span>20XX/XX/XX X:XX に公開予定</span>
+      </div>
+  <ytd-grid-video-renderer>
+  ...
+OR
+  <ytd-video-renderer>
+    <a id="video-title" href=" (link) "> (title) </a>
+
+
+
+
+
+
+
+<meta itemprop="startDate" content="2021-01-16T05:00:35+00:00">
+<meta itemprop="endDate" content="2021-01-16T07:17:32+00:00">
