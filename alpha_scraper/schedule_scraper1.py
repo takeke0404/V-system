@@ -1,6 +1,7 @@
 import csv
 import requests
 import re
+from bs4 import BeautifulSoup
 from apiclient.discovery import build
 import os
 import sys
@@ -42,16 +43,26 @@ def main():
         # Web ページ取得
         web_page = requests.get(url)
         #print("watch?v=" in web_page.text)
+
+        #with open("tmp.txt", mode = "w", encoding = "utf_8") as f:
+        #    f.write(web_page.text)
+
         
         # video ID 探索
         search_result = video_id_pattern.search(web_page.text)
         if search_result:
             video_id = search_result.groups()[0]
             print("video_id", video_id)
-            response = youtube.videos().list(part = 'snippet', id = video_id).execute()
-            print(response["items"][0]["snippet"]["title"])
+            #response = youtube.videos().list(part = 'snippet', id = video_id).execute()
+            #print(response["items"][0]["snippet"]["title"])
+
+        # video ID 探索 2
+        soup = BeautifulSoup(web_page.text, "html.parser")
+        link = soup.find("a")
+        print(link.get("href").split("watch?v=")[-1])
 
         print()
+        break
 
 def load_youtube_data_api_key():
     global youtube_data_api_key
