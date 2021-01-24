@@ -4,7 +4,9 @@ from selenium.common.exceptions import NoSuchElementException
 import requests
 from bs4 import BeautifulSoup
 import re
+import json
 import time
+import datetime
 import os
 import sys
 
@@ -139,7 +141,10 @@ def investigate_youtube_video(video_url):
 
     title_text = None
     start_date = None
+    start_datetime = None
     end_date = None
+    end_datetime = None
+    islive = None
     
     soup = BeautifulSoup(web_page.text, "html.parser")
 
@@ -147,23 +152,96 @@ def investigate_youtube_video(video_url):
     if title:
         title_text = title.get_text()
 
+    title_meta = soup.find("meta", {"name" : "title"})
+    if title_meta:
+        title_text = title_meta.get("content")
+
     start_meta = soup.find("meta", {"itemprop" : "startDate"})
     if start_meta:
         start_date = start_meta.get("content")
+        start_datetime = datetime.datetime.fromisoformat(start_date)
 
     end_meta = soup.find("meta", {"itemprop" : "endDate"})
     if end_meta:
         end_date = end_meta.get("content")
+        end_datetime = datetime.datetime.fromisoformat(end_date)
 
-    print(video_url, title_text)
+    islive_meta = soup.find("meta", {"itemprop" : "isLiveBroadcast"})
+    if islive_meta:
+        islive = islive_meta.get("content")
+
+    print(video_url)
+    print("", title_text)
     print("", start_date, "-", end_date)
+    print("", start_datetime, "-", end_datetime)
+    print("", "isLive", islive)
 
+    metas = soup.find_all("meta")
+    for meta in metas:
+        if meta.get("property"):
+            if "og:video:tag" in meta.get("property"):
+                continue
+        
+        #print(meta)
+
+    #print("", "scheduledStartTime", "scheduledStartTime" in web_page.text)
+
+    #for a in [m.start() for m in re.finditer("scheduledStartTime", web_page.text, flags=re.IGNORECASE)]:
+    #    #print(web_page.text[a-1000:a+1000])
+    #    t = ""
+    #    for s in soup.find_all("script"):
+    #        if s.string:
+    #            #print(s.string)
+    #            t += "" + s.string + "\n"
+
+    #print("", "playabilityStatus" in web_page.text)
+    for a in [m.start() for m in re.finditer("\"status\":", web_page.text, flags=re.IGNORECASE)]:
+        print(web_page.text[a:a+100])
+    
+    #print("", "LIVE_STREAM_OFFLINE" in web_page.text)
+
+    for s in soup.find_all("script"):
+        script_content = s.string
+        if script_content:
+            #print(script_content)
+
+            #script_content2 = script_content.replace("\\\"", "")
+            if "\"scheduledStartTime\":" in script_content:
+                print("scheduledStartTime")
+
+            if "\"status\":\"LIVE_STREAM_OFFLINE\"," in script_content:
+                print("LIVE_STREAM_OFFLINE")
+
+            if "\"status\":\"UNPLAYABLE\"," in script_content:
+                print("UNPLAYABLE")
+            #json_keys = re.findall("\".*?\".*?:.*?\".*?\"", script_content2, re.DOTALL)
+            #for t in json_keys:
+            #    if "scheduledStartTime" in t:
+            #        print(json_keys)
+            #        print("scheduledStartTime")
+
+    #with open("tmp.txt", mode = "w", encoding = "utf_8") as f:
+    #    f.write(web_page.text)
+
+    print()
     return (video_url, title_text, start_date, end_date)
 
 if __name__ == "__main__":
-    main()
-    #investigate_youtube_video("https://www.youtube.com/watch?v=khJugsohbuY")
-    #investigate_youtube_video("https://www.youtube.com/watch?v=g4tCXx7tBWs")
-    #investigate_youtube_video("https://www.youtube.com/watch?v=G7IBLfDovwU")
-    #investigate_youtube_video("https://www.youtube.com/watch?v=LOXHfjabhLU")
-    #investigate_youtube_video("https://www.youtube.com/watch?v=WQYN2P3E06s")
+    #main()
+    if True:
+        # 消去された配信
+        investigate_youtube_video("https://www.youtube.com/watch?v=g4tCXx7tBWs")
+        # 配信済み
+        investigate_youtube_video("https://www.youtube.com/watch?v=G7IBLfDovwU")
+        # 配信ではない動画
+        investigate_youtube_video("https://www.youtube.com/watch?v=WQYN2P3E06s")
+        # 配信予定
+        investigate_youtube_video("https://www.youtube.com/watch?v=khJugsohbuY")
+        # メンバー限定
+        investigate_youtube_video("https://www.youtube.com/watch?v=FLIIJlfguiY")
+
+        investigate_youtube_video("https://www.youtube.com/watch?v=bmUCzUZllSI")
+
+        investigate_youtube_video("https://www.youtube.com/watch?v=w303bMEvLtU")
+
+        investigate_youtube_video("https://www.youtube.com/watch?v=xP89_B0pBYw")

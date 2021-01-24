@@ -1,3 +1,4 @@
+Youtube チャンネル Selenium
 
 <ytd-item-section-renderer> 横一列分
 <div id="contents">
@@ -34,7 +35,33 @@ OR
 
 
 
+Youtube 動画 requests
 
-
+<meta name="title" content=" (title) ">
 <meta itemprop="startDate" content="2021-01-16T05:00:35+00:00">
 <meta itemprop="endDate" content="2021-01-16T07:17:32+00:00">
+<meta itemprop="isLiveBroadcast" content="True">
+
+
+<script ...> (中身) </script>
+"scheduledStartTime":
+"status":"LOGIN_REQUIRED",
+"status":"LIVE_STREAM_OFFLINE",
+"status":"UNPLAYABLE",
+"status":"OK",
+
+
+
+if UNPLAYABLE:
+  メンバー限定
+if isLiveBroadcast:
+  (配信動画)
+  if LIVE_STREAM_OFFLINE:
+    配信予定
+  if endDate:
+    配信終了
+  配信中
+if OK:
+  配信じゃない動画
+動画無し
+
