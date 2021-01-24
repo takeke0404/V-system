@@ -27,11 +27,22 @@ def main():
 
     cursor = connection.cursor()
 
-    cursor.execute("SELECT youtube_channel_id FROM vtuber")
+    #cursor.execute("SELECT youtube_channel_id FROM vtuber")
+    #print(cursor.fetchall())
+
+    cursor.execute("SELECT * FROM vtuber")
     print(cursor.fetchall())
 
+    #cursor.execute("INSERT INTO vtuber (name, youtube_channel_id) VALUES ('鷹宮リオン', 'UCV5ZZlLjk5MKGg3L0n0vbzw');")
+    #print(cursor.fetchall())
+    #cursor.close()
+    #connection.commit()
+    #cursor = connection.cursor()
+
     cursor.execute("SELECT * FROM video")
-    print(cursor.fetchall())
+    a = cursor.fetchall()
+    print(a)
+    #print(a[0][5])
 
     cursor.close()
     connection.close()
