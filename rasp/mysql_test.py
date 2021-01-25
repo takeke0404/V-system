@@ -44,6 +44,9 @@ def main():
     print(a)
     #print(a[0][5])
 
+    cursor.execute("SELECT id, youtube_video_id FROM video WHERE status=1 OR status=2;")
+    print(cursor.fetchall())
+
     cursor.close()
     connection.close()
 
