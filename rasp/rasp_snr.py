@@ -10,7 +10,7 @@ rasp_key_path = "rasp.key"
 
 # 送信するファイル
 files = ["v_cron.sh", "v_cron.py", "v_scraper.py", "v_mysql.py", "v_liner.py"]
-#files = ["mysql_test.py"]
+#files = ["mysql_test2.py"]
 #files = ["line.key"]
 #files = ["mysql_test.py", "mysql.key"]
 

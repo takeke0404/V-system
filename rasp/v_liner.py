@@ -12,11 +12,11 @@ class Manager:
 
         if os.path.isfile(line_key_path):
             with open(line_key_path, "r") as key_file:
-                line_access_token = key_file.readline().splitlines()[0]
+                self.line_access_token = key_file.readline().splitlines()[0]
         else:
             raise Exception("LINE:" + line_key_path + " is not exist.")
 
 
-    def send(message):
-        requests.post(line_notify_url, headers = {"Authorization": "Bearer " + line_access_token}, params = {"message": message, "notificationDisabled": "true"})
+    def send(self, message):
+        requests.post(self.line_notify_url, headers = {"Authorization": "Bearer " + self.line_access_token}, params = {"message": message, "notificationDisabled": "true"})
 

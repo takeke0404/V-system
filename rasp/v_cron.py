@@ -14,7 +14,6 @@ import v_liner
 
 def main():
 
-
     try:
 
         # ログファイル出力先
@@ -30,12 +29,11 @@ def main():
         database = v_mysql.Manager()
 
         # 始まりのお知らせ
-        liner.send("v_cron 起動します。")
+        liner.send("v_cron を起動します。")
 
         # vtuber を取得
         database.connect()
         sql_result_vtuber = database.execute("SELECT id, youtube_channel_id FROM vtuber;")
-        sql_result_video = database.execute("SELECT id, youtube_video_id FROM video;")
         database.close()
 
         # selenium driver 起動
@@ -44,9 +42,7 @@ def main():
         options.add_argument('--disable-gpu')
         driver = webdriver.Chrome(executable_path="/usr/lib/chromium-browser/chromedriver", options = options)
 
-        # 
-        insert_videos = [] # (vtuber_id, status, title, youtube_video_id, start, end)
-        update_videos = [] # (status, title, start, end, id)
+        # 変数の用意
         searched_video_ids = set()
         week_after = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(weeks = 1)
 
@@ -54,6 +50,7 @@ def main():
             # YouTube チャンネル
             print("YouTube Channel:", vtuber_id, youtube_channel_id)
 
+            # 
             youtube_video_ids = v_scraper.youtube_channel(driver, youtube_channel_id)
 
             wait_a_minute()
@@ -62,70 +59,28 @@ def main():
                 # YouTube 動画
                 print("YouTube Video:", youtube_video_id)
 
-                # データベースに存在するか確認
-                video_id = None
-                for v_id, yt_v_id in sql_result_video:
-                    if youtube_video_id == yt_v_id:
-                        video_id = v_id
-
                 # 
-                status, title, start, end = v_scraper.youtube_video(youtube_video_id)
-
-                # 日時を文字列に
-                start_str = None if start is None else start.isoformat()
-                end_str = None if end is None else end.isoformat()
-
-                if video_id is None:
-                    # データベースに存在しない
-                    if start is not None and start < week_after:
-                        insert_videos.append((vtuber_id, status, title, youtube_video_id, start_str, end_str))
-                else:
-                    # データベースに存在する
-                    update_videos.append((status, title, start_str, end_str, video_id))
-                    searched_video_ids.add(video_id)
+                video_id = process_video(database, week_after, youtube_video_id, vtuber_id)
+                if video_id is not None:
+                    searched_video_ids.add(youtube_video_id)
 
                 wait_a_minute()
 
         driver.quit()
 
-        database.connect()
-
         # 調べるべき動画
-        sql_result_video_2 = database.execute("SELECT id, youtube_video_id FROM video WHERE status=1 OR status=2;")
-
-        # データベース追加
-        if insert_videos:
-            print(insert_videos)
-            database.executemany("INSERT INTO video (vtuber_id, status, title, youtube_video_id, start, end) VALUES (%s, %s, %s, %s, %s, %s);", insert_videos)
-
-        # データベース更新
-        if update_videos:
-            print(update_videos)
-            database.executemany("UPDATE video SET status=%s, title=%s, start=%s, end=%s WHERE id=%s;", update_videos)
-
+        database.connect()
+        sql_result_video = database.execute("SELECT id, vtuber_id, youtube_video_id FROM video WHERE status=1 OR status=2;")
         database.close()
 
-        update_videos = []
-        for video_id, youtube_video_id in sql_result_video_2:
+        for video_id, vtuber_id, youtube_video_id in sql_result_video:
             if video_id not in searched_video_ids:
                 # 先程調べていなかった動画
                 print("YouTube Video:", youtube_video_id)
 
-                status, title, start, end = v_scraper.youtube_video(youtube_video_id)
-
-                start_str = None if start is None else start.isoformat()
-                end_str = None if end is None else end.isoformat()
-
-                update_videos.append((status, title, start_str, end_str, video_id))
+                process_video(database, week_after, youtube_video_id, vtuber_id)
 
                 wait_a_minute()
-
-        # データベース更新
-        database.connect()
-        if update_videos:
-            print(update_videos)
-            database.executemany("UPDATE video SET status=%s, title=%s, start=%s, end=%s WHERE id=%s;", update_videos)
-        database.close()
 
     except Exception as e:
         print(traceback.format_exc())
@@ -134,7 +89,7 @@ def main():
 
         # LINE
         try:
-            liner.send("ERROR: v_cron.py\n" + now_str + "\n" + traceback.format_exc())
+            liner.send("ERROR: v_cron.py\n" + now_str + "(UTC)\n" + traceback.format_exc())
         except Exception as e:
             pass
 
@@ -142,9 +97,39 @@ def main():
         try:
             log_path = os.path.join(log_dir, now_str + ".log")
             with open(log_path, mode = "w", encoding = "utf_8") as log_file:
-                log_file.write("ERROR: v_cron.py\n" + now_str + "\n" + traceback.format_exc())
+                log_file.write("ERROR: v_cron.py\n" + now_str + "(UTC)\n" + traceback.format_exc())
         except Exception as e:
             pass
+
+
+def process_video(database, week_after, youtube_video_id, vtuber_id):
+
+    video_id = None
+
+    # 
+    status, title, start_datetime, end_datetime = v_scraper.youtube_video(youtube_video_id)
+
+    # 日時を文字列に
+    start_str = None if start_datetime is None else start_datetime.isoformat()
+    end_str = None if end_datetime is None else end_datetime.isoformat()
+
+    database.connect()
+
+    # データベースに存在するか確認する
+    result = database.execute("SELECT id FROM video WHERE youtube_video_id=%s;", (youtube_video_id, ))
+    if result:
+        # データベースに存在する
+        video_id = result[0][0]
+        database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s WHERE id=%s;", (status, title, start_str, end_str, video_id))
+    else:
+        # データベースに存在しない
+        if start_datetime is not None and start_datetime < week_after:
+            database.execute("INSERT INTO video (vtuber_id, status, title, youtube_video_id, start, end) VALUES (%s, %s, %s, %s, %s, %s);", (vtuber_id, status, title, youtube_video_id, start_str, end_str))
+            video_id = database.execute("SELECT LAST_INSERT_ID();")[0][0]
+
+    database.close()
+
+    return video_id
 
 
 def wait_a_minute():
