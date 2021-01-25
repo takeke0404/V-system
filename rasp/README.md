@@ -1,5 +1,6 @@
 # Raspberry Pi
 
+
 ## 連絡事項
 mysql の video テーブルの status について
 1: 配信予定
@@ -8,6 +9,7 @@ mysql の video テーブルの status について
 4: ただの動画
 5: メンバー限定
 6: 存在しない
+
 
 ## Raspberry Pi
 再起動時にファイルチェック：`shutdown -r -F now`<br>
@@ -21,6 +23,15 @@ sudo apt full-upgrade
 mysql
 firefox-esr
 python3-pip
+
+
+## Cron
+`service cron status`<br>
+### 設定する
+`crontab -e`<br>
+追記する：`0 * * * * sh ---.sh`<br>
+### 設定を確認する
+`crontab -l`<br>
 
 
 ## MySQL
@@ -101,6 +112,7 @@ GRANT SELECT (id, name, ...), INSERT, UPDATE ON vcdb_rp.vtuber TO '(username)'@'
 
 
 ```
+
 
 ## Python
 
