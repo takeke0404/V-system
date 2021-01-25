@@ -9,20 +9,24 @@ import sys
 
 import v_mysql
 import v_scraper
+import v_liner
 
 
 def main():
 
-    # ログファイル出力先
-    log_dir_name = "log"
-    log_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), log_dir_name)
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
-    if not os.path.isdir(log_dir):
-        print(log_dir, "is not dir.")
-        sys.exit()
 
     try:
+
+        # ログファイル出力先
+        log_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "log")
+        if not os.path.exists(log_dir):
+            os.mkdir(log_dir)
+        if not os.path.isdir(log_dir):
+            print(log_dir, "is not dir.")
+            sys.exit()
+
+        # モジュール読み込み
+        liner = v_liner.Manager()
         database = v_mysql.Manager()
 
         # vtuber を取得
@@ -122,6 +126,22 @@ def main():
 
     except Exception as e:
         print(traceback.format_exc())
+
+        now_str = datetime.datetime.now(datetime.timezone.utc).strftime("%Y_%m_%d_%H_%M_%S")
+
+        # LINE
+        try:
+            liner.send("ERROR: v_cron.py\n" + now_str + "\n" + traceback.format_exc())
+        except Exception as e:
+            pass
+
+        # ログファイル
+        try:
+            log_path = os.path.join(log_dir, now_str + ".log")
+            with open(log_path, mode = "w", encoding = "utf_8") as log_file:
+                log_file.write("ERROR: v_cron.py\n" + now_str + "\n" + traceback.format_exc())
+        except Exception as e:
+            pass
 
 
 def wait_a_minute():
