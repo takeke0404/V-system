@@ -18,5 +18,5 @@ class Manager:
 
 
     def send(message):
-        requests.post(line_notify_url, headers = {"Authorization": "Bearer " + line_access_token}, params = {"message": message})
+        requests.post(line_notify_url, headers = {"Authorization": "Bearer " + line_access_token}, params = {"message": message, "notificationDisabled": "true"})
 

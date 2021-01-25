@@ -29,6 +29,9 @@ def main():
         liner = v_liner.Manager()
         database = v_mysql.Manager()
 
+        # 始まりのお知らせ
+        liner.send("v_cron 起動します。")
+
         # vtuber を取得
         database.connect()
         sql_result_vtuber = database.execute("SELECT id, youtube_channel_id FROM vtuber;")
