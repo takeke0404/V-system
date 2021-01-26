@@ -92,8 +92,12 @@ CREATE TABLE video (
     title VARCHAR(256),
     youtube_video_id VARCHAR(64),
     start DATETIME,
-    end DATETIME
+    end DATETIME,
+    notified TINYINT UNSIGNED
 );
+
+ALTER TABLE (table) ADD (column) INT AFTER (column);
+ALTER TABLE (table) MODIFY (column) INT NOT NULL DEFAULT 0;
 
 show tables;
 desc (table);
@@ -101,6 +105,8 @@ desc (table);
 INSERT INTO vtuber(name, youtube_channel_id) VALUES
     ('早瀬 走', 'UC2OacIzd2UxGHRGhdHl1Rhw'),
     ('白雪 巴', 'UCuvk5PilcvDECU7dDZhQiEw');
+
+UPDATE vtuber SET name=" ... ", youtube_channel_id=" ... " WHERE id=1;
 
 CREATE USER '(username)'@'(host)' IDENTIFIED BY '(password)';
     (host) : localhost, % (どこからでもアクセス), ...
