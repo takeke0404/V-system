@@ -25,7 +25,7 @@ class Manager:
                 self.mysql_password = key_file.readline().splitlines()[0]
                 self.mysql_database = key_file.readline().splitlines()[0]
         else:
-            raise Exception("MySQL: init " + mysql_key_path + " is not exist.")
+            raise Exception("MySQL: init " + mysql_key_path + " does not exist.")
 
 
     def connect(self):

@@ -14,7 +14,7 @@ class Manager:
             with open(line_key_path, "r") as key_file:
                 self.line_access_token = key_file.readline().splitlines()[0]
         else:
-            raise Exception("LINE:" + line_key_path + " is not exist.")
+            raise Exception("LINE:" + line_key_path + " does not exist.")
 
 
     def send(self, message):

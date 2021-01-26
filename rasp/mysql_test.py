@@ -14,7 +14,7 @@ def main():
             mysql_password = key_file.readline().splitlines()[0]
             mysql_database = key_file.readline().splitlines()[0]
     else:
-        print(os.path.abspath(os.path.join(os.path.dirname(__file__), mysql_key_path)), "is not exist.")
+        print(os.path.abspath(os.path.join(os.path.dirname(__file__), mysql_key_path)), "does not exist.")
         sys.exit()
 
     connection = mysql.connector.connect(

@@ -133,7 +133,7 @@ class Main:
             # LINE への通知文
             if status == 3 and not notified & 64:
                 notified = notified | 64
-                self.line_message += "\n\n" + title + "\n" + "https://www.youtube.com/watch?v=" + youtube_video_id
+                self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
 
             # データベース更新
             self.database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s, notified=%s WHERE id=%s;", (status, title, start_str, end_str, video_id, notified))
@@ -144,7 +144,7 @@ class Main:
                 # LINE への通知文
                 if status == 3:
                     notified = 64
-                    self.line_message += "\n\n" + title + "\n" + "https://www.youtube.com/watch?v=" + youtube_video_id
+                    self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
                 else:
                     notified = 0
 

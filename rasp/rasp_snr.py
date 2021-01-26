@@ -28,11 +28,11 @@ def main():
             port = key_file.readline().splitlines()[0]
             secret_key_path = key_file.readline().splitlines()[0]
     else:
-        print(rasp_key_path, "is not exist.")
+        print(rasp_key_path, "does not exist.")
         sys.exit()
 
     if not os.path.isfile(secret_key_path):
-        print(secret_key_path, "is not exist.")
+        print(secret_key_path, "does not exist.")
         sys.exit()
 
     # 送信先フォルダ確認
