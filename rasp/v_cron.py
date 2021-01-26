@@ -136,7 +136,7 @@ class Main:
                 self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
 
             # データベース更新
-            self.database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s, notified=%s WHERE id=%s;", (status, title, start_str, end_str, video_id, notified))
+            self.database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s, notified=%s WHERE id=%s;", (status, title, start_str, end_str, notified, video_id))
         else:
             # データベースに存在しない
             if start_datetime is not None and start_datetime < self.week_after:
