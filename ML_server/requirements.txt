@@ -1,0 +1,13 @@
+flask
+youtube_dl
+beautifulsoup4
+retry
+requests
+inaSpeechSegmenter
+numpy
+tensorflow
+keras_bert
+keras
+pandas
+sentencepiece
+sklearn
