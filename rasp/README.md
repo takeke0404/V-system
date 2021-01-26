@@ -32,7 +32,11 @@ python3-pip
 追記する：`0 * * * * sh ---.sh`<br>
 ### 設定を確認する
 `crontab -l`<br>
-
+### ログ
+`vi /etc/rsyslog.conf`<br>
+60行目くらいの`#cron.* ...`の`#`を削除する。<br>
+`sudo service rsyslog restart`<br>
+ログファイル：`/var/log/cron.log`<br>
 
 ## MySQL
 

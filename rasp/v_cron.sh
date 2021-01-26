@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd ~/rasp/
-python3.9 ./v_cron.py
+/usr/local/bin/python3.9 ./v_cron.py
