@@ -10,6 +10,7 @@ import sys
 import v_mysql
 import v_scraper
 import v_liner
+import v_mler
 
 
 class Main:
@@ -29,6 +30,7 @@ class Main:
 
             # モジュール読み込み
             liner = v_liner.Manager()
+            self.mler = v_mler.Manager()
             self.database = v_mysql.Manager()
 
             # LINE への通知文
@@ -114,6 +116,7 @@ class Main:
     def process_video(self, youtube_video_id, vtuber_id):
         print("YouTube Video:", youtube_video_id)
         video_id = None
+        video_end = False
 
         # 調べる
         status, title, start_datetime, end_datetime = v_scraper.youtube_video(youtube_video_id)
@@ -131,10 +134,10 @@ class Main:
             video_id = result[0][0]
             notified = result[0][1]
 
-            # LINE への通知文
             if status == 3 and not notified & 64:
+                # 配信が終了した
                 notified = notified | 64
-                self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
+                video_end = True
 
             # データベース更新
             self.database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s, notified=%s WHERE id=%s;", (status, title, start_str, end_str, notified, video_id))
@@ -142,10 +145,10 @@ class Main:
             # データベースに存在しない
             if start_datetime is not None and start_datetime < self.week_after:
 
-                # LINE への通知文
                 if status == 3:
+                    # 配信が終了していた
                     notified = 64
-                    self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
+                    video_end = True
                 else:
                     notified = 0
 
@@ -155,7 +158,15 @@ class Main:
 
         self.database.close()
 
+        if video_end:
+            self.process_end_video(title, youtube_video_id)
+
         return video_id
+
+
+    def process_end_video(self, youtube_video_id, title):
+        self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
+        self.mler.post(youtube_video_id)
 
 
     def wait_a_minute(self):
