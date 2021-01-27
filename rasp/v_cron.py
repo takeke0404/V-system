@@ -32,7 +32,7 @@ class Main:
             self.database = v_mysql.Manager()
 
             # LINE への通知文
-            self.line_message = "v_cron を起動しました。"
+            self.line_message = "" #"v_cron を起動しました。"
             #liner.send("v_cron を起動します。")
 
             # vtuber を取得
@@ -88,7 +88,8 @@ class Main:
                     self.wait_a_minute()
 
             # 終わりのお知らせ
-            liner.send(self.line_message)
+            if self.line_message:
+                liner.send(self.line_message)
 
         except Exception as e:
             print(traceback.format_exc())
