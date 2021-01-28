@@ -175,7 +175,7 @@ class Main:
         try:
             self.mler.post(youtube_video_id)
         except Exception as e:
-            self.notification_error += traceback.format_exc() + "\n\n"
+            self.notification_error += "機械学習サーバとの通信に失敗しました。\n" + traceback.format_exc() + "\n\n"
 
 
     def wait_a_minute(self):

@@ -22,3 +22,5 @@ class Manager:
 
         response = requests.post(self.mler_url + "/post_url", data = {"youtube_url" : "https://www.youtube.com/watch?v=" + youtube_video_id})
 
+        return response
+
