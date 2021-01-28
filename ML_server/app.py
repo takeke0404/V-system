@@ -45,7 +45,6 @@ def post_url():
                 csvfile = "./summarization_by_comment_count_and_bert/"+video_id[0]+".csv"
     if(csvfile!=""):
         json_list = []
-        keys = ('start', 'end')
         with open(csvfile) as f:
             for row in csv.reader(f):
                 json_list.append(row)

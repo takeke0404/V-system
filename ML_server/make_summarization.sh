@@ -35,3 +35,4 @@ rm -rf "./tmp/$name.json"
 rm -rf "./data/$name.csv"
 rm -rf "./predict_result/$name.csv"
 echo " " > making.txt
+python send_data.py "$name"
