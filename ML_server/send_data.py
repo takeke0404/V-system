@@ -11,7 +11,7 @@ if __name__ == "__main__":
             json_list.append(row)
     response = requests.post("http://192.168.1.102:58539/api/video-analyzed",json.dumps(json_list))
     print(response)
-    if(response=="recieved"):
+    if(response=="received"):
         print("送信成功")
     else:
         print("送信失敗")
