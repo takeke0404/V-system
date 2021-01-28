@@ -33,9 +33,9 @@ class Main:
             self.mler = v_mler.Manager()
             self.database = v_mysql.Manager()
 
-            # LINE への通知文
-            self.line_message = "" #"v_cron を起動しました。"
-            #liner.send("v_cron を起動します。")
+            # 通知文
+            self.notification_end_video = ""
+            self.notification_error = ""
 
             # vtuber を取得
             self.database.connect()
@@ -89,9 +89,14 @@ class Main:
 
                     self.wait_a_minute()
 
-            # 終わりのお知らせ
-            if self.line_message:
-                liner.send(self.line_message)
+            # LINE への通知
+            line_message = ""
+            if self.notification_end_video:
+                line_message += "配信が終了しました。\n" + self.notification_end_video
+            if self.notification_error:
+                line_message += "エラーが発生しました。\n" + self.notification_error
+            if line_message:
+                liner.send(line_message)
 
         except Exception as e:
             print(traceback.format_exc())
@@ -165,8 +170,12 @@ class Main:
 
 
     def process_end_video(self, youtube_video_id, title):
-        self.line_message += "\n\n配信が終了しました。\n" + title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id
-        self.mler.post(youtube_video_id)
+        self.notification_end_video += title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id + "\n\n"
+
+        try:
+            self.mler.post(youtube_video_id)
+        except Exception as e:
+            self.notification_error += traceback.format_exc() + "\n\n"
 
 
     def wait_a_minute(self):
