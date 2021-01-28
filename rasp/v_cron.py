@@ -169,7 +169,7 @@ class Main:
         return video_id
 
 
-    def process_end_video(self, youtube_video_id, title):
+    def process_end_video(self, title, youtube_video_id):
         self.notification_end_video += title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id + "\n\n"
 
         try:
