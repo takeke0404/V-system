@@ -26,6 +26,9 @@ if [ -f "tmp/$name.json" ] && [ -f "tmp/$name.wav" ] ; then
     python make_data.py "$name"
     python predict.py "$name"
     python summarization_by_comment_count_and_bert.py "$name" $2
+    if [ -f "summarization_by_comment_count_and_bert/$2.csv" ]; then
+        python send_data.py "$2"
+    fi
 else
     echo $2 >> error.txt
 fi
@@ -35,4 +38,3 @@ rm -rf "./tmp/$name.json"
 rm -rf "./data/$name.csv"
 rm -rf "./predict_result/$name.csv"
 echo " " > making.txt
-python send_data.py "$name"
