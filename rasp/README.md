@@ -30,6 +30,7 @@ python3-pip
 ### 設定する
 `crontab -e`<br>
 追記する：`0 * * * * sh ---.sh`<br>
+追記する：`@reboot sh ---.sh`<br>
 ### 設定を確認する
 `crontab -l`<br>
 ### ログ
@@ -144,6 +145,7 @@ beautifulsoup4
 mysql-connector-python
 requests
 datetime
+flask
 
 ## 参考
 
