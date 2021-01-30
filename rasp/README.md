@@ -10,6 +10,15 @@ mysql の video テーブルの status について
 5: メンバー限定
 6: 存在しない
 
+notified & 64 : 編集者への通知
+
+analysis_status
+1: 未解析
+2: 未解析（後でもう一度聞いてみる）
+3: 解析中
+4: 解析完了
+5: エラー
+
 
 ## Raspberry Pi
 再起動時にファイルチェック：`shutdown -r -F now`<br>
@@ -89,12 +98,14 @@ CREATE TABLE vtuber (
 CREATE TABLE video (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     vtuber_id INT UNSIGNED,
-    status TINYINT UNSIGNED,
+    status TINYINT UNSIGNED NOT NULL DEFAULT 0,
     title VARCHAR(256),
     youtube_video_id VARCHAR(64),
     start DATETIME,
     end DATETIME,
-    notified TINYINT UNSIGNED
+    notified TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    analysis_status TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    analysis_result VARCHAR(1024)
 );
 
 ALTER TABLE (table) ADD (column) INT AFTER (column);
