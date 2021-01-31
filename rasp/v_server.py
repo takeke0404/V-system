@@ -37,9 +37,9 @@ def video_analyzed():
 
         mler.process_analysis_status(youtube_video_id, 4, data_str)
 
-        return flask.Response(response = json.dumps(["received"]), status = 200)
+        return flask.Response(response = "received", status = 200)
     except Exception as e:
-        return flask.Response(response = json.dumps(["error"]), status = 500)
+        return flask.Response(response = "error", status = 500)
 
 
 if __name__ == "__main__":
