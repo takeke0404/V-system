@@ -42,6 +42,40 @@ def video_analyzed():
         return flask.Response(response = "error", status = 500)
 
 
+@app.route("/api/analyzed-video-list", methods = ["POST"])
+def analyzed_video_list():
+    try:
+
+        database.connect()
+        result = database.execute("SELECT id, title FROM video WHERE analysis_status=4;")
+        database.close()
+
+        video_list = []
+        for row in result:
+            video_list.append({"id": row[0], "title": row[1]})
+
+        return flask.Response(response = json.dumps({"video_list": video_list}), status = 200)
+    except Exception as e:
+        return flask.Response(response = "error", status = 500)
+
+
+@app.route("/api/video-analysis", methods = ["POST"])
+def analyzed_video():
+    try:
+        data = json.loads(flask.request.get_data())
+        video_id = data["video_id"]
+
+        database.connect()
+        result = database.execute("SELECT title, youtube_video_id, analysis_result FROM video WHERE id=%s;", (video_id, ))
+        database.close()
+
+        reply = {"id": video_id, "title": result[0][0], "youtube_video_id": result[0][1], "analysis": result[0][2]}
+
+        return flask.Response(response = json.dumps(reply), status = 200)
+    except Exception as e:
+        return flask.Response(response = "error", status = 500)
+
+
 if __name__ == "__main__":
     app.run("0.0.0.0", port = server_url.split(":")[-1])
 
