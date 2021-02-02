@@ -69,3 +69,13 @@ class Manager:
         if result and analysis_status == 4 and data_str is not None:
             self.liner.send("解析が終了しました。\n" + result[0][1] + "\n" + youtube_video_id + "\n" + data_str)
 
+
+    def analyze_next(self):
+
+        # 解析すべき動画の取得
+        self.database.connect()
+        result = self.database.execute("SELECT youtube_video_id FROM video WHERE analysis_status=2;")
+        self.database.close()
+
+        if result:
+            self.post(result[0][0])
