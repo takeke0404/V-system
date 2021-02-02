@@ -33,11 +33,15 @@ class Window:
             number.grid(row = i, column = 0, sticky = tk.E)
             title = ttk.Label(root, text = video["title"])
             title.grid(row = i, column = 1, sticky = tk.W)
-            button = ttk.Button(root, text = "↓", command = lambda: self.process_video(video["id"]))
+            button = ttk.Button(root, text = "↓", command = self.push_button(video["id"]))
             button.grid(row = i, column = 2)
 
         root.mainloop()
 
+    def push_button(self, video_id):
+        def f():
+            self.process_video(video_id)
+        return f
 
     def process_video(self, video_id):
 
@@ -136,7 +140,7 @@ print("ADD video")
         clip_end = clip_time[1].strip("\"").strip("'")
         script_2 += "s = math.floor(tonumber(video_fps) * " + clip_start + ")\n"
         script_2 += "e = math.floor(tonumber(video_fps) * " + clip_end + ")\n"
-        script_2 += "print(s .. \" \" .. e)"
+        script_2 += "print(s .. \" \" .. e)\n"
         script_2 += "mediaPool:AppendToTimeline({{mediaPoolItem = video, startFrame = s, endFrame = e}})\n"
 
     return script_1 + script_2
