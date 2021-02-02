@@ -40,8 +40,8 @@ def main():
     #cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM video")
-    a = cursor.fetchall()
-    print(a)
+    for a in cursor.fetchall():
+        print(a)
     #print(a[0][5])
 
     #cursor.execute("SELECT id, youtube_video_id FROM video WHERE status=6;")
