@@ -10,8 +10,7 @@ if __name__ == "__main__":
         for row in csv.reader(f):
             json_list.append(row)
     response = requests.post("http://192.168.1.102:58539/api/video-analyzed",json.dumps(json_list))
-    print(response)
-    if(response=="received"):
+    if(response.status_code == requests.codes.ok):
         print("送信成功")
     else:
         print("送信失敗")
