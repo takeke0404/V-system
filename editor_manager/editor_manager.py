@@ -111,6 +111,7 @@ for index in pairs(videos) do
 end
 
 video_resolution = video:GetClipProperty()["Resolution"]
+video_height = ""
 video_fps = video:GetClipProperty()["FPS"]
 
 project:SetSetting("timelineFrameRate", video_fps)
@@ -120,6 +121,7 @@ for s in string.gmatch(video_resolution, "([^x]+)") do
         project:SetSetting("timelineResolutionWidth", s)
     else
         project:SetSetting("timelineResolutionHeight", s)
+        video_height = s
     end
     i = i + 1
 end
@@ -140,10 +142,16 @@ print("ADD video")
         clip_end = clip_time[1].strip("\"").strip("'")
         script_2 += "s = math.floor(tonumber(video_fps) * " + clip_start + ")\n"
         script_2 += "e = math.floor(tonumber(video_fps) * " + clip_end + ")\n"
-        script_2 += "print(s .. \" \" .. e)\n"
+        script_2 += "print(\"time: \" .. s .. \" \" .. e)\n"
         script_2 += "mediaPool:AppendToTimeline({{mediaPoolItem = video, startFrame = s, endFrame = e}})\n"
 
-    return script_1 + script_2
+    script_3 = """
+print("")
+print("VIDEO resolution: " .. video_resolution .. " (" .. video_height .. "p)")
+print("VIDEO framerate : " .. video_fps)
+"""
+
+    return script_1 + script_2 + script_3
 
 
 if __name__ == "__main__":
