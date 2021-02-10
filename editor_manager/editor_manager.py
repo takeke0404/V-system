@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 import youtube_dl
 import urllib
 import json
+import configparser
 import os
 
 
@@ -17,6 +18,11 @@ class Window:
                 self.server_url = key_file.readline().splitlines()[0]
         else:
             raise Exception(api_key_path + " does not exist.")
+
+        config_path = "config.ini"
+        self.config = configparser.ConfigParser()
+        if os.path.isfile(config_path):
+            self.config.read(config_path, encoding='utf-8')
 
         root = tk.Tk()
         root.title("Editor Manager")
@@ -67,7 +73,7 @@ class Window:
 
         # スクリプト
         with open(os.path.join(dirpath, "resolver.lua"), "w") as pyfile:
-            pyfile.write(resolve_script_lua("V" + str(video_id) + "_" + youtube_video_id, os.path.join(dirpath, video_filename), clip_times))
+            pyfile.write(resolve_script_lua("V" + str(video_id) + "_" + youtube_video_id, os.path.join(dirpath, video_filename), clip_times, self.config.getfloat("DEFAULT", "clip_extend", fallback = 0)))
 
         print("完了", "V" + str(video_id) + "_" + youtube_video_id, title)
 
@@ -88,7 +94,7 @@ def download(url, dirpath):
         raise Exception("Video cannot be downloaded.")
 
 
-def resolve_script_lua(title, video_abspath, clip_times):
+def resolve_script_lua(title, video_abspath, clip_times, clip_extend):
     script_1 = """
 title = \"""" + title + """\"
 video_path = \"""" + video_abspath.replace("\\", "\\\\") + """\"
@@ -113,6 +119,7 @@ end
 video_resolution = video:GetClipProperty()["Resolution"]
 video_height = ""
 video_fps = video:GetClipProperty()["FPS"]
+video_frame_end = tonumber(video:GetClipProperty()["Frames"]) - 1
 
 project:SetSetting("timelineFrameRate", video_fps)
 i = 1
@@ -138,10 +145,10 @@ print("ADD video")
 
     script_2 = ""
     for clip_time in clip_times:
-        clip_start = clip_time[0].strip("\"").strip("'")
-        clip_end = clip_time[1].strip("\"").strip("'")
-        script_2 += "s = math.floor(tonumber(video_fps) * " + clip_start + ")\n"
-        script_2 += "e = math.floor(tonumber(video_fps) * " + clip_end + ")\n"
+        clip_start = max(float(clip_time[0].strip("\"").strip("'")) - clip_extend, 0)
+        clip_end = float(clip_time[1].strip("\"").strip("'")) + clip_extend
+        script_2 += "s = math.max(math.floor(tonumber(video_fps) * " + str(clip_start) + "), 0)\n"
+        script_2 += "e = math.min(math.floor(tonumber(video_fps) * " + str(clip_end) + "), video_frame_end)\n"
         script_2 += "print(\"time: \" .. s .. \" \" .. e)\n"
         script_2 += "mediaPool:AppendToTimeline({{mediaPoolItem = video, startFrame = s, endFrame = e}})\n"
 
