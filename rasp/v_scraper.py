@@ -1,14 +1,18 @@
 from selenium.common.exceptions import NoSuchElementException
 import requests
 import re
+import json
+import urllib
 import datetime
 from bs4 import BeautifulSoup
+
+
+re_freechat = re.compile("([ふフ][りリ]ー|free).*?([ちチ][ゃャ][っッ][とト]|chat)", re.IGNORECASE)
 
 
 def youtube_channel(driver, channel_id):
 
     video_ids = set()
-    re_freechat = re.compile("([ふフ][りリ]ー|free).*?([ちチ][ゃャ][っッ][とト]|chat)", re.IGNORECASE)
 
     # チャンネルページにアクセス
     url = "https://www.youtube.com/channel/" + channel_id
@@ -52,6 +56,13 @@ def youtube_channel(driver, channel_id):
         except NoSuchElementException:
             pass
 
+    return video_ids
+
+
+def youtube_embedded_live(channel_id):
+
+    video_id = None
+
     # ライブ配信埋め込みURLにアクセス
     url = "https://www.youtube.com/embed/live_stream?channel=" + channel_id
     web_page = requests.get(url)
@@ -59,10 +70,12 @@ def youtube_channel(driver, channel_id):
 
     title = soup.find("title") # " - YouTube" を含む
     link = soup.find("a")
-    if link is not None and re_freechat.search(title.get_text()) is not None:
-        video_ids.add(link.get("href").split("watch?v=")[-1])
+    if link is not None and re_freechat.search(title.get_text()) is None:
+        url_parse = urllib.parse.urlparse(link.get("href"))
+        query = urllib.parse.parse_qs(url_parse.query)
+        video_id = query["v"][0]
 
-    return video_ids
+    return video_id
 
 
 def youtube_video(video_id):
@@ -78,6 +91,8 @@ def youtube_video(video_id):
     title_text = None
     start_datetime = None
     end_datetime = None
+    youtube_channel_ids = set()
+    exists_chat = False
 
     web_page = requests.get(url)
     soup = BeautifulSoup(web_page.text, "html.parser")
@@ -92,6 +107,43 @@ def youtube_video(video_id):
                 status_livestreamonline = True
             if "\"status\":\"OK\"," in script_content:
                 status_ok = True
+
+            # ytInitialData
+            if script_content.startswith("var ytInitialData"):
+                try:
+                    json_start = script_content.find("{")
+                    json_end = script_content.rfind("}")
+                    json_text = script_content[json_start : json_end + 1]
+                    json_data = json.loads(json_text)
+
+                    # 動画説明から YouTube チャンネルの URL を抽出
+                    try:
+                        descriptions = json_data["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]["videoSecondaryInfoRenderer"]["description"]["runs"]
+
+                        for description in descriptions:
+                            try:
+                                link = description["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]
+                                if link["webPageType"] == "WEB_PAGE_TYPE_CHANNEL":
+                                    youtube_channel_ids.add(link["url"].split("/")[2])
+                                elif link["webPageType"] == "WEB_PAGE_TYPE_UNKNOWN":
+                                    url_parse = urllib.parse.urlparse(link["url"])
+                                    if url_parse.netloc == "www.youtube.com" and url_parse.path.startswith("/channel/"):
+                                        youtube_channel_ids.add(url_parse.path.split("/")[2])
+                            except Exception as e:
+                                pass
+
+                    except Exception as e:
+                        pass
+
+                    # チャットが存在するか
+                    try:
+                        chat = json_data["contents"]["twoColumnWatchNextResults"]["conversationBar"]
+                        exists_chat = True
+                    except Exception as e:
+                        exists_chat = False
+                
+                except Exception as e:
+                    pass
 
     # タイトル
     title_meta = soup.find("meta", {"name" : "title"})
@@ -128,5 +180,4 @@ def youtube_video(video_id):
     else:
         status = 6
 
-    return status, title_text, start_datetime, end_datetime
-
+    return status, title_text, start_datetime, end_datetime, youtube_channel_ids, exists_chat

@@ -19,6 +19,10 @@ analysis_status
 4: 解析完了
 5: エラー
 
+editor_id
+1: 編集者全体の情報を保存する。
+2-: 各編集者
+
 
 ## Raspberry Pi
 再起動時にファイルチェック：`shutdown -r -F now`<br>
@@ -93,7 +97,8 @@ USE vcdb_rp;
 CREATE TABLE vtuber (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(256),
-    youtube_channel_id VARCHAR(64)
+    youtube_channel_id VARCHAR(64),
+    editor_id INT UNSIGNED
 );
 CREATE TABLE video (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -103,9 +108,14 @@ CREATE TABLE video (
     youtube_video_id VARCHAR(64),
     start DATETIME,
     end DATETIME,
+    collaboration_vtuber VARCHAR(128),
     notified TINYINT UNSIGNED NOT NULL DEFAULT 0,
     analysis_status TINYINT UNSIGNED NOT NULL DEFAULT 0,
     analysis_result VARCHAR(1024)
+);
+CREATE TABLE editor (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(256)
 );
 
 ALTER TABLE (table) ADD (column) INT AFTER (column);
@@ -119,6 +129,8 @@ INSERT INTO vtuber(name, youtube_channel_id) VALUES
     ('白雪 巴', 'UCuvk5PilcvDECU7dDZhQiEw');
 
 UPDATE vtuber SET name=" ... ", youtube_channel_id=" ... " WHERE id=1;
+
+INSERT INTO editor(name) VALUES ('editor');
 
 CREATE USER '(username)'@'(host)' IDENTIFIED BY '(password)';
     (host) : localhost, % (どこからでもアクセス), ...
