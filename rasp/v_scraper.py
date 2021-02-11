@@ -127,7 +127,7 @@ def youtube_video(video_id):
                                     youtube_channel_ids.add(link["url"].split("/")[2])
                                 elif link["webPageType"] == "WEB_PAGE_TYPE_UNKNOWN":
                                     url_parse = urllib.parse.urlparse(link["url"])
-                                    if url_parse.netloc == "www.youtube.com" and url_parse.path.startswith("/channel/"):
+                                    if (url_parse.netloc == "www.youtube.com" or url_parse.netloc == "") and url_parse.path.startswith("/channel/"):
                                         youtube_channel_ids.add(url_parse.path.split("/")[2])
                             except Exception as e:
                                 pass

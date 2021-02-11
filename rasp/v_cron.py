@@ -130,10 +130,20 @@ class Main:
         self.database.connect()
 
         # コラボを確認する
-        collaboration_vtuber_ids_string = None
+        collaboration_vtuber_id_join = None
+        collaboration_vtuber_name_join = None
         if youtube_channel_ids:
-            result = self.database.execute("SELECT id FROM vtuber WHERE youtube_channel_id=%s" + (" OR youtube_channel_id=%s" * (len(youtube_channel_ids) - 1)) + ";", youtube_channel_ids)
-            collaboration_vtuber_ids_string = ",".join([str(row[0]) for row in result if row[0] != vtuber_id].sort())
+
+            # データベースに存在する vtuber か確認
+            result = self.database.execute("SELECT id, name FROM vtuber WHERE youtube_channel_id=%s" + (" OR youtube_channel_id=%s" * (len(youtube_channel_ids) - 1)) + ";", list(youtube_channel_ids))
+
+            # 配信者のチャンネルを除いたリスト化
+            collaboration_vtubers = [(row[0], row[1]) for row in result if row[0] != vtuber_id]
+
+            if collaboration_vtubers:
+                collaboration_vtubers.sort()
+                collaboration_vtuber_id_join = ",".join([str(row[0]) for row in collaboration_vtubers])
+                collaboration_vtuber_name_join = ", ".join([row[1] for row in collaboration_vtubers])
 
         # データベースに存在するか確認する
         result = self.database.execute("SELECT id, notified, analysis_status FROM video WHERE youtube_video_id=%s;", (youtube_video_id, ))
@@ -149,14 +159,14 @@ class Main:
                 if not notified & 64:
                     # 通知がまだ
                     notified = notified | 64
-                    self.add_end_video(title, youtube_video_id, collaboration_vtuber_ids_string)
+                    self.add_end_video(title, youtube_video_id, collaboration_vtuber_name_join)
 
                 if will_analyze and analysis_status < 2:
                     # 解析を予定する
                     analysis_status = 2
 
             # データベース更新
-            self.database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s, collaboration_vtuber=%s, notified=%s, analysis_status=%s WHERE id=%s;", (status, title, start_str, end_str, collaboration_vtuber_ids_string, notified, analysis_status, video_id))
+            self.database.execute("UPDATE video SET status=%s, title=%s, start=%s, end=%s, collaboration_vtuber=%s, notified=%s, analysis_status=%s WHERE id=%s;", (status, title, start_str, end_str, collaboration_vtuber_id_join, notified, analysis_status, video_id))
         else:
             # データベースに存在しない
             if start_datetime is not None and start_datetime < self.week_after:
@@ -170,14 +180,14 @@ class Main:
 
                     # 通知
                     notified = 64
-                    self.add_end_video(title, youtube_video_id, collaboration_vtuber_ids_string)
+                    self.add_end_video(title, youtube_video_id, collaboration_vtuber_name_join)
 
                     if will_analyze:
                         # 解析を予定する
                         analysis_status = 2
 
                 # データベース追加
-                self.database.execute("INSERT INTO video (vtuber_id, status, title, youtube_video_id, start, end, collaboration_vtuber, notified, analysis_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", (vtuber_id, status, title, youtube_video_id, start_str, end_str, collaboration_vtuber_ids_string, notified, analysis_status))
+                self.database.execute("INSERT INTO video (vtuber_id, status, title, youtube_video_id, start, end, collaboration_vtuber, notified, analysis_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", (vtuber_id, status, title, youtube_video_id, start_str, end_str, collaboration_vtuber_id_join, notified, analysis_status))
                 video_id = self.database.execute("SELECT LAST_INSERT_ID();")[0][0]
 
         self.database.close()
@@ -185,10 +195,10 @@ class Main:
         return video_id
 
 
-    def add_end_video(self, title, youtube_video_id, collaboration_vtuber_ids_string):
+    def add_end_video(self, title, youtube_video_id, collaboration_vtuber_name_join):
         self.notification_end_video += title + "\nhttps://www.youtube.com/watch?v=" + youtube_video_id + "\n"
-        if collaboration_vtuber_ids_string is not None:
-            self.notification_end_video += "コラボ： " + collaboration_vtuber_ids_string + "\n"
+        if collaboration_vtuber_name_join is not None:
+            self.notification_end_video += "コラボ： " + collaboration_vtuber_name_join + "\n"
         self.notification_end_video += "\n"
 
 
