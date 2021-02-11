@@ -4,6 +4,7 @@ import os
 
 import v_mysql
 import v_liner
+import v_scraper
 
 
 class Manager:
@@ -74,8 +75,13 @@ class Manager:
 
         # 解析すべき動画の取得
         self.database.connect()
-        result = self.database.execute("SELECT youtube_video_id FROM video WHERE analysis_status=2;")
+        videos = self.database.execute("SELECT youtube_video_id FROM video WHERE analysis_status=2;")
         self.database.close()
 
-        if result:
-            self.post(result[0][0])
+        for video in videos:
+
+            # チャット確認
+            status, title, start_datetime, end_datetime, youtube_channel_ids, exists_chat = v_scraper.youtube_video(video[0])
+            if exists_chat:
+                self.post(video[0])
+                break
