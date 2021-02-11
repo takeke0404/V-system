@@ -49,12 +49,22 @@ def analyzed_video_list():
     try:
 
         database.connect()
-        result = database.execute("SELECT id, title FROM video WHERE analysis_status=4;")
-        database.close()
+        result = database.execute(
+            "SELECT video.id, vtuber.name, video.title, video.start, video.end, video.collaboration_vtuber "
+            "FROM video INNER JOIN vtuber ON video.vtuber_id=vtuber.id "
+            "WHERE video.analysis_status=4;")
 
         video_list = []
         for row in result:
-            video_list.append({"id": row[0], "title": row[1]})
+            collaboration_vtuber_names = []
+            if row[5] is not None:
+                collaboration_vtuber_ids = [int(id) for id in row[5].split(",")]
+                result2 = database.execute("SELECT name FROM vtuber WHERE id=%s" + (" OR id=%s" * (len(collaboration_vtuber_ids) - 1)) + ";", collaboration_vtuber_ids)
+                collaboration_vtuber_names = [row2[0] for row2 in result2]
+
+            video_list.append({"id": row[0], "vtuber": row[1], "title": row[2], "start": row[3].isoformat(), "end": row[4].isoformat(), "collaboration_vtuber": collaboration_vtuber_names})
+
+        database.close()
 
         return flask.Response(response = json.dumps({"video_list": video_list}), status = 200)
     except Exception as e:

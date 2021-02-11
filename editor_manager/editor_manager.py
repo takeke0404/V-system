@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 import youtube_dl
 import urllib
 import json
+import datetime
 import configparser
 import os
 
@@ -37,10 +38,29 @@ class Window:
         for i, video in enumerate(video_list):
             number = ttk.Label(root, text = video["id"])
             number.grid(row = i, column = 0, sticky = tk.E)
+
+            name = ttk.Label(root, text = video["vtuber"])
+            name.grid(row = i, column = 1, sticky = tk.W)
+
             title = ttk.Label(root, text = video["title"])
-            title.grid(row = i, column = 1, sticky = tk.W)
+            title.grid(row = i, column = 2, sticky = tk.W)
+
+            collaboration_vtuber = ttk.Label(root, text = ", ".join(video["collaboration_vtuber"]))
+            collaboration_vtuber.grid(row = i, column = 3, sticky = tk.W)
+
+            start_datetime = datetime.datetime.fromisoformat(video["start"])
+            end_datetime = datetime.datetime.fromisoformat(video["end"])
+
+            start = ttk.Label(root, text = (start_datetime + datetime.timedelta(hours=9)).strftime("%m/%d %H:%M"))
+            start.grid(row = i, column = 4, sticky = tk.W)
+
+            m, s = divmod((end_datetime - start_datetime).seconds, 60)
+            h, m = divmod(m, 60)
+            length = ttk.Label(root, text = "{:02d}:{:02d}:{:02d}".format(h, m, s))
+            length.grid(row = i, column = 5, sticky = tk.W)
+
             button = ttk.Button(root, text = "↓", command = self.push_button(video["id"]))
-            button.grid(row = i, column = 2)
+            button.grid(row = i, column = 6)
 
         root.mainloop()
 
