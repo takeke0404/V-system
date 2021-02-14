@@ -1,0 +1,104 @@
+
+var ytInitialData = 
+{
+    "responseContext": {
+    },
+    "contents": {
+        "twoColumnWatchNextResults": {
+            "results": {
+                "results": {
+                    "contents": [
+                        {
+                            "videoPrimaryInfoRenderer": {
+                            }
+                        },
+                        {
+                            "videoSecondaryInfoRenderer": {
+                                "owner": {
+                                },
+                                "description": {
+                                    "runs": [
+                                        {
+                                            "text": "今から此処が血の海になることも識らずに──暢気な奴等だ。\n\n主催：痛面組\n"
+                                        },
+                                        {
+                                            "text": "@桜凛月",
+                                            "navigationEndpoint": {
+                                                "clickTrackingParams": "CKsBELH3BCITCLKLwcKw3e4CFRdGWAodjWYOBA==",
+                                                "commandMetadata": {
+                                                    "webCommandMetadata": {
+                                                        "url": "/channel/UCfQVs_KuXeNAlGa3fb8rlnQ",
+                                                        "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                                                        "rootVe": 3611,
+                                                        "apiUrl": "/youtubei/v1/browse"
+                                                    }
+                                                },
+                                                "browseEndpoint": {
+                                                    "browseId": "UCfQVs_KuXeNAlGa3fb8rlnQ",
+                                                    "canonicalBaseUrl": "/channel/UCfQVs_KuXeNAlGa3fb8rlnQ"
+                                                }
+                                            },
+                                            "loggingDirectives": {
+                                                "trackingParams": "CKsBELH3BCITCLKLwcKw3e4CFRdGWAodjWYOBA==",
+                                                "visibility": {
+                                                    "types": "12"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "text": "​"
+                                        },
+
+
+
+                                        {
+                                            "text": " \n\n**************************************************************\n\n少し頼みたいこと\n・放送内容に関係ない話題を話しすぎないでほしい\n・他の配信者の放送で話題になってないのに俺の話をしすぎないでほしい\n・俺の配信の空気感は俺の配信内に留めてほしい\n・初見でも見やすいようあまり過去のネタを引っ張りすぎないようにしてるのでよければ協力してほしい\n・ゲーム中、先の展開や解法を知ってる人がネタバレをしないでほしい\n・以上の内容に反することも見かけても、わざわざ注意して揉めたりしないでね（一番大事）\n\nゲームのリクエスト\n【 "
+                                        },
+                                        {
+                                            "text": "https://forms.gle/QwCUip9s2msJDfFEA",
+                                            "navigationEndpoint": {
+                                                "clickTrackingParams": "CJ8BEM2rARgBIhMIsovBwrDd7gIVF0ZYCh2NZg4ESMXp5OezmPmGCA==",
+                                                "commandMetadata": {
+                                                    "webCommandMetadata": {
+                                                        "url": "https://www.youtube.com/redirect?event=video_description\u0026redir_token=QUFFLUhqbC1teVpCNDZKZ1FfMWJSOHRnSlRoRjh0dVYwUXxBQ3Jtc0tsV3Q2TzlPeHFDaXhScG04YVBBbzJON3hxYVhQNkphUk5XV3dvTFphOGVTeEVuNlpTZTQ0a1lGblkzQ0lFVGJIN3p1cFNDLU9uMG9OS1BneUtmOFBlYkV1TUstemRuYl85eFNiTjlHSG9abVdOcC1DTQ\u0026q=https%3A%2F%2Fforms.gle%2FQwCUip9s2msJDfFEA",
+                                                        "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                                                        "rootVe": 83769
+                                                    }
+                                                },
+                                                "urlEndpoint": {
+                                                    "url": "https://www.youtube.com/redirect?event=video_description\u0026redir_token=QUFFLUhqbC1teVpCNDZKZ1FfMWJSOHRnSlRoRjh0dVYwUXxBQ3Jtc0tsV3Q2TzlPeHFDaXhScG04YVBBbzJON3hxYVhQNkphUk5XV3dvTFphOGVTeEVuNlpTZTQ0a1lGblkzQ0lFVGJIN3p1cFNDLU9uMG9OS1BneUtmOFBlYkV1TUstemRuYl85eFNiTjlHSG9abVdOcC1DTQ\u0026q=https%3A%2F%2Fforms.gle%2FQwCUip9s2msJDfFEA",
+                                                    "target": "TARGET_NEW_WINDOW",
+                                                    "nofollow": true
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "text": "​"
+                                        },
+                                        {
+                                            "text": " 】\nなるべく他の人と被ってないか、まずはリンクをチェックしてね\n\n◎よくある質問\n\nQ.いつまでやるの？\nA.気が済むまで。\n\nQ.まゆゆ、まゆくん、他あだ名で呼んでいい？\nA.あまり推奨はしてない。\n\nQ.明日って何日？\nA.日付をまたいでも寝るまでが今日 寝て起きたら明日\n\nQ.コメント出さないの？\nA.出さない。\n\nQ.体調大丈夫？喉大丈夫？寝てる？ご飯食べてる？\nA.それなりに。\n\n**************************************************************\n\nにじさんじ所属バーチャルライバー 黛灰の放送です。\n\n◯プロフィール\n類い稀な才能を持つハッカー\n持て余した暇をどうにかするべく配信活動を始める\n買い物は全て通販で済ませるいわゆる出不精\n\n※インターネット等を用いた不正アクセス行為やその助長行為は法律で禁止されています。\n※模倣防止や演出上などの観点から一部実際のコマンドラインと異なる箇所がございます。\n\n\n〇各種タグ\n配信タグ："
+                                        },
+                                        {
+                                            "text": "#ライブハック",
+                                            "navigationEndpoint": {
+                                                "clickTrackingParams": "CKQBENzXBCITCLKLwcKw3e4CFRdGWAodjWYOBA==",
+                                                "commandMetadata": {
+                                                    "webCommandMetadata": {
+                                                        "url": "/hashtag/%E3%83%A9%E3%82%A4%E3%83%96%E3%83%8F%E3%83%83%E3%82%AF",
+                                                        "webPageType": "WEB_PAGE_TYPE_BROWSE",
+                                                        "rootVe": 6827,
+                                                        "apiUrl": "/youtubei/v1/browse"
+                                                    }
+                                                },
+                                                "browseEndpoint": {
+                                                    "browseId": "FEhashtag",
+                                                    "params": "6gUUChLjg6njgqTjg5bjg4_jg4Pjgq8%3D"
+                                                }
+                                            },
+                                            "loggingDirectives": {
+                                                "trackingParams": "CKQBENzXBCITCLKLwcKw3e4CFRdGWAodjWYOBA==",
+                                                "visibility": {
+                                                    "types": "12"
+                                                }
+                                            }
+                                        },

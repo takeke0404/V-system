@@ -1,12 +1,14 @@
 import csv
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+import urllib
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
 import time
 import datetime
+import traceback
 import os
 import sys
 
@@ -200,6 +202,8 @@ def investigate_youtube_video(video_url):
     
     #print("", "LIVE_STREAM_OFFLINE" in web_page.text)
 
+    save_text = ""
+    youtube_channel_ids2 = set()
     for s in soup.find_all("script"):
         script_content = s.string
         if script_content:
@@ -214,21 +218,64 @@ def investigate_youtube_video(video_url):
 
             if "\"status\":\"UNPLAYABLE\"," in script_content:
                 print("UNPLAYABLE")
+
             #json_keys = re.findall("\".*?\".*?:.*?\".*?\"", script_content2, re.DOTALL)
             #for t in json_keys:
             #    if "scheduledStartTime" in t:
             #        print(json_keys)
             #        print("scheduledStartTime")
 
-    #with open("tmp.txt", mode = "w", encoding = "utf_8") as f:
-    #    f.write(web_page.text)
+            if "ytInitialData" in script_content:
+                if script_content.startswith("var ytInitialData"):
+                    print("var ytInitialData")
+                    json_start = script_content.find("{")
+                    json_end = script_content.rfind("}")
+                    json_text = script_content[json_start : json_end + 1]
+                    json_data = json.loads(json_text)
+
+                    save_text = json_text
+
+                    # 説明から YouTube チャンネルの URL を抽出
+                    try:
+                        descriptions = json_data["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]["videoSecondaryInfoRenderer"]["description"]["runs"]
+
+                        for description in descriptions:
+                            try:
+                                link = description["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]
+                                # print(link)
+                                if link["webPageType"] == "WEB_PAGE_TYPE_CHANNEL":
+                                    youtube_channel_ids2.add(link["url"].split("/")[2])
+                                elif link["webPageType"] == "WEB_PAGE_TYPE_UNKNOWN":
+                                    url_parse = urllib.parse.urlparse(link["url"])
+                                    # print(url_parse)
+                                    if (url_parse.netloc == "www.youtube.com" or url_parse.netloc == "") and url_parse.path.startswith("/channel/"):
+                                        youtube_channel_ids2.add(url_parse.path.split("/")[2])
+                            except Exception as e:
+                                pass
+
+                    except Exception as e:
+                        print("There is no description.")
+
+                    # chat
+                    try:
+                        a = json_data["contents"]["twoColumnWatchNextResults"]["conversationBar"]
+                        print(a)
+                    except Exception as e:
+                        print("Error in chat replay")
+                        print(traceback.format_exc())
+
+    print(youtube_channel_ids2)
+
+    # with open("tmp.txt", mode = "w", encoding = "utf_8") as f:
+    #     # f.write(web_page.text)
+    #     f.write(save_text)
 
     print()
     return (video_url, title_text, start_date, end_date)
 
 if __name__ == "__main__":
     #main()
-    if True:
+    if False:
         # 消去された配信
         investigate_youtube_video("https://www.youtube.com/watch?v=g4tCXx7tBWs")
         # 配信済み
@@ -245,3 +292,14 @@ if __name__ == "__main__":
         investigate_youtube_video("https://www.youtube.com/watch?v=w303bMEvLtU")
 
         investigate_youtube_video("https://www.youtube.com/watch?v=xP89_B0pBYw")
+
+    # コラボ
+    #investigate_youtube_video("https://www.youtube.com/watch?v=CA3kwzz5NMU")
+
+    #investigate_youtube_video("https://www.youtube.com/watch?v=an2CauLx0NA")
+
+    #investigate_youtube_video("https://www.youtube.com/watch?v=RMAe2-8McY0")
+
+    investigate_youtube_video("https://www.youtube.com/watch?v=nhdrMAMt170")
+
+
