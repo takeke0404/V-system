@@ -54,7 +54,7 @@ $('input#urlPost').on('click', function(){
             document.getElementById('res').innerHTML='要約の作成に失敗しています';
             return false;
         }else{
-            video_id=response;
+            video_id = response[0].split("watch?v=")[1];
             document.getElementById('res').innerHTML='';
         }
         clip_segments = JSON.parse(data).slice(1);
@@ -95,7 +95,7 @@ function retry_post(formData){
             document.getElementById('res').innerHTML='要約の作成に失敗しています';
             return false;
         }else{
-            video_id=response;
+            video_id = response[0].split("watch?v=")[1];
         }
         clip_segments = JSON.parse(data).slice(1);
         player = new YT.Player('player', {
