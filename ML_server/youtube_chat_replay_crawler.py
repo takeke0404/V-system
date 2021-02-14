@@ -19,16 +19,11 @@ def get_ytInitialData(target_url, session):
     html = session.get(target_url, headers=headers)
     soup = BeautifulSoup(html.text, 'html.parser')
     for script in soup.find_all('script'):
-        script_text = str(script)
-        if 'ytInitialData' in script_text:
+        script_text = script.string
+        if script_text and "ytInitialData" in script_text:
             for line in script_text.splitlines():
-                if 'ytInitialData' in line:
-                    if 'var ytInitialData =' in line:
-                        st = line.strip().find('var ytInitialData =') + 19
-                        return(json.loads(line.strip()[st:-10]))
-                    if 'window["ytInitialData"] =' in line:
-                        return(json.loads(line.strip()[len('window["ytInitialData"] = '):-1]))
-#                    return(json.loads(line.strip()[len('window["ytInitialData"] = '):-1]))
+                if line.startswith("var ytInitialData") or line.startswith("window[\"ytInitialData\"]"):
+                    return(json.loads(line[line.find("{") : line.rfind("}") + 1]))
 
     if 'Sorry for the interruption. We have been receiving a large volume of requests from your network.' in str(soup):
         print("restricted from Youtube (Rate limit)")
