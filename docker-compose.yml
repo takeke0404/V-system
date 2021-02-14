@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+    get_video:
+        build: ./video_clipper_0
+        volumes:
+            - ./video_clipper_0:/video
+        command: bash -c "python get_video.py"
+    ml_server:
+        build: ./ML_server
+        ports:
+          - 28967:80
+        volumes:
+          - ./ML_server:/ML_server
+        tty: true
+        environment:
+          TZ: Asia/Tokyo
+        command: python3 app.py
