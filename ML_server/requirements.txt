@@ -11,3 +11,4 @@ keras
 pandas
 sentencepiece
 sklearn
+matplotlib==3.2  
