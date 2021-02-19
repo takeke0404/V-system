@@ -1,4 +1,5 @@
 import requests
+import urllib
 import json
 import os
 
@@ -34,7 +35,7 @@ class Manager:
     def post(self, youtube_video_id):
 
         # 機械学習サーバに送信する。
-        response = requests.post(self.mler_url + "/post_url", data = {"youtube_url" : "https://www.youtube.com/watch?v=" + youtube_video_id})
+        response = requests.post(urllib.parse.urljoin(self.mler_url, "post_url"), data = {"youtube_url" : "https://www.youtube.com/watch?v=" + youtube_video_id})
 
         if response.status_code == requests.codes.ok:
             data = json.loads(response.text)
@@ -51,7 +52,11 @@ class Manager:
                 analysis_status = 4
                 data_str = json.dumps({"clip_times" : data[1:]})
 
-            self.process_analysis_status(youtube_video_id, analysis_status, data_str)
+            if analysis_status == 4:
+                # v_server に送信する。
+                response2 = requests.post(urllib.parse.urljoin(self.server_url, "video-analyzed"), data = response.text)
+            else:
+                self.process_analysis_status(youtube_video_id, analysis_status, data_str)
 
         else:
             raise Exception("MLer: Error in connecting to Machine Learning Server")

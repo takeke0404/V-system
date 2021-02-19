@@ -14,7 +14,7 @@ notified & 64 : 編集者への通知
 
 analysis_status
 1: 未解析
-2: 未解析（後でもう一度聞いてみる（未実装））
+2: 未解析（後でもう一度聞いてみる）
 3: 解析中
 4: 解析完了
 5: エラー
@@ -115,7 +115,8 @@ CREATE TABLE video (
 );
 CREATE TABLE editor (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(256)
+    name VARCHAR(256),
+    discord_id VARCHAR(64)
 );
 
 ALTER TABLE (table) ADD (column) INT AFTER (column);
@@ -169,6 +170,7 @@ mysql-connector-python
 requests
 datetime
 flask
+discord.py
 
 ## 参考
 
