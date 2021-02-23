@@ -65,3 +65,12 @@ if OK:
   配信じゃない動画
 動画無し
 
+
+YouTube Data API video
+
+["snippet"]["liveBroadcastContent"]: "upcoming"（配信予定） | "live"（配信中） | "none"（それ以外（配信終了 | 配信ではない動画））
+["liveStreamingDetails"]: { ... } 配信動画ならば存在する。
+["liveStreamingDetails"]["scheduledStartTime"]
+["liveStreamingDetails"]["actualStartTime"] 配信中・配信終了動画に存在する。
+["liveStreamingDetails"]["actualEndTime"] 配信終了動画に存在する。
+存在しない動画は結果が返ってこない。
