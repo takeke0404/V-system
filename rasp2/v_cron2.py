@@ -1,6 +1,5 @@
 import datetime
 import time
-import re
 import random
 import traceback
 import os

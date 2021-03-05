@@ -9,8 +9,8 @@ Raspberry Pi に Send and Run します。
 rasp_key_path = "rasp.key"
 
 # 送信するファイル
-files = ["v_cron1.sh", "v_cron1.py", "v_cron2.sh", "v_cron2.py", "v_scraper.py", "v_mysql.py", "v_liner.py"]
-# files = ["mysql.key", "line.key"]
+files = ["v_cron1.sh", "v_cron1.py", "v_cron2.sh", "v_cron2.py", "v_cron3.sh", "v_cron3.py", "v_server.sh", "v_server.py", "v_scraper.py", "v_mysql.py", "v_liner.py", "v_discorder.py", "v_mler.py"]
+# files = ["mysql.key", "line.key", "discord.key", "server.key", "mls.key"]
 # files = ["tmp.py"]
 
 destination_dir = "~/rasp2"

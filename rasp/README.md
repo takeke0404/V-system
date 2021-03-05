@@ -14,7 +14,7 @@ notified & 64 : 編集者への通知
 
 analysis_status
 1: 未解析
-2: 未解析（後でもう一度聞いてみる）
+2: 未解析（チャットが存在すると確認済み）
 3: 解析中
 4: 解析完了
 5: エラー
@@ -98,6 +98,7 @@ CREATE TABLE vtuber (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(256),
     youtube_channel_id VARCHAR(64),
+    youtube_api_key VARCHAR(64),
     editor_id INT UNSIGNED
 );
 CREATE TABLE video (
@@ -171,6 +172,7 @@ requests
 datetime
 flask
 discord.py
+google-api-python-client
 
 ## 参考
 
