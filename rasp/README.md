@@ -173,6 +173,7 @@ datetime
 flask
 discord.py
 google-api-python-client
+feedparser
 
 ## 参考
 
