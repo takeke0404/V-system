@@ -20,6 +20,8 @@ class DiscordClient(discord.Client):
     async def send_dm(self, user_id, message):
         print("v_discorder send_dm:", message)
         user = await self.fetch_user(user_id)
+        if user.dm_channel is None:
+            await user.create_dm()
         await user.send(message)
 
 

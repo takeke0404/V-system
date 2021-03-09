@@ -2,6 +2,7 @@ import flask
 import urllib
 import json
 import datetime
+import threading
 import traceback
 import os
 
@@ -66,13 +67,20 @@ def video_analyzed():
 
             discorder.send_dm(result[0][0],
                 "解析が終了しました。\n"
-                "タイトル： " + result[0][2] + "\n"
-                "配信者： " + result[0][1] + "\n"
-                "コラボ： " + collaboration_vtuber_names + "\n"
-                "開始日時: " + (result[0][3] + datetime.timedelta(hours=9)).strftime("%m/%d %H:%M") + "\n"
-                "長さ: " + "{:02d}:{:02d}:{:02d}".format(h, m, s))
+                "タイトル：　" + result[0][2] + "\n"
+                "配信者　：　" + result[0][1] + "\n"
+                "コラボ　：　" + collaboration_vtuber_names + "\n"
+                "開始日時：　" + (result[0][3] + datetime.timedelta(hours=9)).strftime("%m/%d %H:%M") + "\n"
+                "長さ　　：　" + "{:02d}:{:02d}:{:02d}".format(h, m, s))
 
-        mler.analyze_next()
+        try:
+            NextAnalyzer().start()
+        except Exception as e:
+            print("ERROR: v_server.py NextAnalyzer\n" + traceback.format_exc())
+            try:
+                liner.send("ERROR: v_server.py NextAnalyzer\n" + traceback.format_exc())
+            except Exception as e:
+                pass
 
         return flask.Response(response = "received", status = 200)
     except Exception as e:
@@ -82,6 +90,16 @@ def video_analyzed():
         except Exception as e:
             pass
         return flask.Response(response = "error", status = 500)
+
+
+class NextAnalyzer(threading.Thread):
+
+    def __init__(self):
+        super().__init__()
+
+
+    def run(self):
+        mler.analyze_next()
 
 
 @app.route("/api/analyzed-video-list", methods = ["POST"])

@@ -1,7 +1,7 @@
 import requests
 import urllib
 import json
-import threading
+import datetime
 import time
 import random
 import os
@@ -56,7 +56,7 @@ class Manager:
             else:
                 # analysis_status = 4
                 # v_server に送信する。
-                response2 = requests.post(urllib.parse.urljoin(self.server_url, "video-analyzed"), data = response.text)
+                response2 = requests.post(urllib.parse.urljoin(self.server_url, "api/video-analyzed"), data = response.text)
 
         else:
             raise Exception("MLer: Error in connecting to Machine Learning Server")
@@ -83,37 +83,26 @@ class Manager:
         result = self.database.execute("SELECT youtube_video_id FROM video WHERE analysis_status = 2;")
         self.database.close()
 
+        # print(result)
         if result:
             self.post(result[0][0])
             return
 
         # 解析すべき動画（チャットが存在すると確認されていない）の取得
         self.database.connect()
-        result = self.database.execute("SELECT youtube_video_id FROM video WHERE analysis_status = 1;")
+        result = self.database.execute("SELECT youtube_video_id, start FROM video WHERE analysis_status = 1;")
         self.database.close()
 
+        # print(result)
         if result:
-            chat_check_thread = ChatChecker(self, [row[0] for row in result])
-            chat_check_thread.start()
-
-
-class ChatChecker(threading.Thread):
-
-    def __init__(self, mler, youtube_video_id_list):
-        super().__init__()
-
-        self.mler = mler
-        self.youtube_video_id_list = youtube_video_id_list
-
-
-    def run(self):
-        for youtube_video_id in self.youtube_video_id_list:
-            try:
-                data = v_scraper.youtube_video_ytInitialData(youtube_video_id)
-                chat = data["contents"]["twoColumnWatchNextResults"]["conversationBar"]
-                mler.update_analysis(youtube_video_id, 2)
-                mler.post(youtube_video_id)
-                break
-            except Exception as e:
-                pass
-            time.sleep(0.1 * random.randint(50, 150))
+            for row in result:
+                try:
+                    data = v_scraper.youtube_video_ytInitialData(row[0])
+                    chat = data["contents"]["twoColumnWatchNextResults"]["conversationBar"]
+                    self.update_analysis(row[0], 2)
+                    self.post(row[0])
+                    print("POST", row[0])
+                    break
+                except Exception as e:
+                    pass
+                time.sleep(0.1 * random.randint(50, 150))
